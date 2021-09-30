@@ -21,9 +21,9 @@ USAGE
 _______________________________________________________________________________________________________________________________________________________________________________
 
 On the left hand side, you can select a Digimon stage from the first drop down. The second drop down will change to list all available sprite sheets. 
-Once selected press Go! and the digimon at each position of the sprite sheet will be listed.
+Once selected press Go! and the Digimon at each position of the sprite sheet will be listed.
 
-Useful for finding out what sprite set is for each Digimon.
+Useful for finding out which Digimon a sprite set is for.
 
 
 
