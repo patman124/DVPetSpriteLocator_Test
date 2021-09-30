@@ -1,3 +1,8 @@
+Note, compiled python scripts are notorious for being flagged as viruses by many anti-virus softwares including Windows Defender. If this happens to you, create an exception/whitelist the executable within your antivirus software.
+
+For those of you who do not trust the executables compiled by some random dude on the internet, the source code is available in a seperate branch for you to review and run yourself.
+
+
 # DVPetSpriteLocator_Test
 A tool that can scan the digimon.csv file and locate sprites on each sheet or scan sheets to tell you the Digimon on them.
 
