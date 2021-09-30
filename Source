@@ -1,0 +1,210 @@
+import csv
+import tkinter as tk
+from tkinter import Button, Entry, Label, Listbox, OptionMenu, StringVar, filedialog
+from tkinter.constants import END
+from natsort import os_sorted
+import os.path
+import sys
+
+gui = tk.Tk()
+gui.title("DVSprite Locator")
+gui.geometry("480x320")
+gui.grid_rowconfigure(3, weight=1)
+gui.grid_columnconfigure(3)
+
+
+
+def list_matching(i1, i2):
+    return [i1[i] for i in i2]
+
+
+def list_duplicates_of(seq, item):
+    start_at = -1
+    locs = []
+    while True:
+        try:
+            loc = seq.index(item, start_at + 1)
+        except ValueError:
+            break
+        else:
+            locs.append(loc)
+            start_at = loc
+    return locs
+
+
+try:
+    if os.path.isfile("evolutions.csv"):
+        open_file = "evolutions.csv"
+        with open(open_file) as evolutions_file:
+            csv_reader = csv.reader(evolutions_file)
+ 
+            next(csv_reader)
+            next(csv_reader)
+            digi = []
+            stage = []
+            sheet_num = []
+            sheet_pos = []
+            digi_lower = []
+            for x in csv_reader:
+                digi.append(x[2])
+                stage.append(x[4])
+                sheet_num.append(x[6])
+                sheet_pos.append(str(int(x[5]) // 11))
+                sprite_sheets = ["sprites" + str(m.replace(",", ".") + n) for m, n in zip(stage, sheet_num)]
+                digi_sheets = [str(m.replace(",", ".") + " - " + n) for m, n in zip(sheet_pos, digi)]
+                sprite_loc = [str(m.replace(",", ".") + " - " + n + " - #" + o) for m, n ,o in zip(digi, sprite_sheets, sheet_pos)]
+            for i in digi:
+                digi_lower.append(i.lower())
+                
+
+        
+    else:
+        open_file = filedialog.askopenfilename(initialdir="./", title="Select digimon.csv",
+                                            filetypes=(("CSV file", ".csv"),))
+
+        with open(open_file) as evolutions_file:
+            csv_reader = csv.reader(evolutions_file)
+
+            next(csv_reader)
+            next(csv_reader)
+            digi = []
+            stage = []
+            sheet_num = []
+            sheet_pos = []
+            digi_lower = []
+            for x in csv_reader:
+                digi.append(x[2])
+                stage.append(x[4])
+                sheet_num.append(x[6])
+                sheet_pos.append(str(int(x[5]) // 11))
+                sprite_sheets = ["sprites" + str(m.replace(",", ".") + n) for m, n in zip(stage, sheet_num)]
+                digi_sheets = [str(m.replace(",", ".") + " - " + n) for m, n in zip(sheet_pos, digi)]
+                sprite_loc = [str(m.replace(",", ".") + " - " + n + " - #" + o) for m, n ,o in zip(digi, sprite_sheets, sheet_pos)]
+            for i in digi:
+                digi_lower.append(i.lower())
+                
+except FileNotFoundError:
+        sys.exit(1)          
+
+evolutions_file.close() 
+    # Define Drop Down menu function for search by file
+evo_stages = ["Fresh", "InTraining", "Rookie", "Champion", "Ultimate", "Mega"]
+
+stage_select = StringVar()
+stage_select.set(evo_stages[0])
+
+sheet_select = StringVar()
+sheet_select.set("Sprite Sheets")
+
+# find index of selection 
+
+index_stage_select = (list_duplicates_of(list(stage), stage_select.get()))
+index_sheet_select = (list_duplicates_of(list(sheet_pos), sheet_select.get()))
+index_sprite_sheet = (list_duplicates_of(list(sprite_sheets),sheet_select.get()))
+
+
+avail_sheets_long = list_matching(sprite_sheets, index_stage_select)
+avail_sheets = []
+
+for i in avail_sheets_long:
+    if i not in avail_sheets:
+        avail_sheets.append(i)
+        avail_sheets = os_sorted(avail_sheets)
+
+
+
+# Define refresh button
+def refresh(p):
+
+    sheet_select.set('')
+    sheet_drop['menu'].delete(0, 'end')
+    index_stage_select = (list_duplicates_of(list(stage), stage_select.get()))
+
+    avail_sheets_long = list_matching(sprite_sheets, index_stage_select)
+    avail_sheets = []
+
+    for l in avail_sheets_long:
+        if l not in avail_sheets:
+            avail_sheets.append(l)
+            avail_sheets = os_sorted(avail_sheets)
+
+
+    new_choices = avail_sheets
+    for choice in new_choices:
+        sheet_drop['menu'].add_command(label=choice, command=tk._setit(sheet_select, choice))
+        sheet_select.set("Sprite Sheets")
+
+def print_to_screen():
+    display = ""
+    # Get the index numbers of items in sprite_sheets that match the value of the second drop down(sheet_select)
+    index_avail_sprite = [ i for i in range(len(sprite_sheets)) if sprite_sheets[i] == str(sheet_select.get()) ]
+    # Searches digi_sprite(Column Number - Name) for index numbers given by index_avail_sprite
+    avail_sprite = [digi_sheets[i] for i in index_avail_sprite]
+    avail_sprite = os_sorted(avail_sprite)
+    display = Listbox(width=25, height=13, highlightthickness=1)
+    display.grid(row=3, column=0, columnspan=2)
+    for x in avail_sprite:
+        display.insert(END, x)
+
+
+        
+
+def name_search_func():
+    display2 = ""
+    # Get the index numbers of items in digi that match the value of the search_entry
+    index_digi = [ i for i in range(len(digi)) if digi_lower[i].find(str(search_bar.get().lower())) != -1 ]
+    # Searches digi_sprite(Column Number - Name) for index numbers given by index_digi
+    digi_info = [sprite_loc[i] for i in index_digi]
+    digi_info = os_sorted(digi_info)
+    display2 = Listbox(width=45, height=13, highlightthickness=1)
+    display2.grid(row=3, column=3,columnspan=2)
+    for x in digi_info:
+        display2.insert(END, x)
+        
+def name_enter(o):
+    display2 = ""
+    # Get the index numbers of items in digi that match the value of the search_entry
+    index_digi = [ i for i in range(len(digi)) if digi_lower[i].find(str(search_bar.get().lower())) != -1 ]
+    # Searches digi_sprite(Column Number - Name) for index numbers given by index_digi
+    digi_info = [sprite_loc[i] for i in index_digi]
+    digi_info = os_sorted(digi_info)
+    display2 = Listbox(width=45, height=13, highlightthickness=1)
+    display2.grid(row=3, column=3,columnspan=2)
+    for x in digi_info:
+        display2.insert(END, x)
+    # Define Drop Down Menu for search by file
+
+
+
+stage_drop = OptionMenu(gui, stage_select, *evo_stages, command= refresh)
+sheet_drop = OptionMenu(gui, sheet_select, *avail_sheets)
+
+# Screen Display
+stage_drop.grid(row=1, column=0)
+sheet_drop.grid(row=2, column=0)
+go_button = Button(gui, text="Go!", command=print_to_screen)
+go_button.grid(row=2, column=1)
+sheet_text = Label(gui, text="Sprite Sheet Search")
+sheet_text.grid(row=0, column=0, columnspan=2)
+sheet_text = Label(gui, text="Digimon Search")
+sheet_text.grid(row=0, column=3, columnspan= 2)
+
+empty = Label(gui, text="      ")
+empty.grid(row=0, column=2)
+# Search button function for Name search    
+search_bar = StringVar()
+
+search_box = Entry(gui, textvariable=search_bar)
+search_box.grid(row=1, column=3)
+search_box.focus_force()
+name_search = Button(gui, text="Search", command=name_search_func)
+name_search.grid(row=1, column=4)
+
+
+sig_ver = Label(gui, text=("(Version 1.1)\nCreated by Patman124"))
+gui.bind('<Return>', name_enter)
+sig_ver.grid(row=4, column=4)
+
+
+# GUI main loop
+gui.mainloop()
