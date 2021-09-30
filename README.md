@@ -1,4 +1,6 @@
-Note, compiled python scripts are notorious for being flagged as viruses by many anti-virus softwares including Windows Defender. If this happens to you, create an exception/whitelist the executable within your antivirus software.
+DISCLAIMER
+_______________________________________________________________________________________________________________________________________________________________________________
+Compiled python scripts are notorious for being flagged as viruses by many anti-virus softwares including Windows Defender. If this happens to you, create an exception/whitelist the executable within your antivirus software.
 
 For those of you who do not trust the executables compiled by some random dude on the internet, the source code is available in a seperate branch for you to review and run yourself.
 
