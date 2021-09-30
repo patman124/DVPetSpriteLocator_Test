@@ -36,4 +36,4 @@ Useful for finding out which Digimon a sprite set is for.
 On the Right side, You can search for Digimon by name. Press search and it will list any Digimon that meet the search requirements. This is not case sensetive
 (Searching aguman will retrieve results for Aguman, Aguman X, Black Agumon, Pagumon, etc.)
 
-Usegful for locating the sprites of specific Digimon.
+Useful for locating the sprites of specific Digimon.
